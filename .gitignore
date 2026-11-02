@@ -1,5 +1,8 @@
 node_modules/
-dist/
 artifacts/
+# The built single file is the deployable artifact: Coolify's Docker build copies
+# dist/index.html straight out of the repo, so it is committed on purpose.
+dist/*
+!dist/index.html
 *.log
 .DS_Store

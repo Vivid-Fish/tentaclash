@@ -44,7 +44,10 @@ npm install
 ```
 
 `dist/index.html` is a single self-contained file: no external requests, no CDN,
-no runtime asset fetches. That is what the container serves.
+no runtime asset fetches. That is what the container serves, so it is **committed to
+the repo on purpose**: the deploy is `FROM nginx:alpine` plus a `COPY` of that one
+file, with no build step on the server. Rebuild and commit it with any source
+change, or the deploy serves the old game.
 
 Other useful commands:
 
