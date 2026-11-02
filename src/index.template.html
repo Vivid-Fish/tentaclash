@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#06111b">
+<meta name="description" content="Tentaclash — an octopus enters the Deep Championship arm-wrestling tournament. One arm wrestles; seven rest.">
+<title>Tentaclash — the Deep Championship</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐙</text></svg>">
+<style>__CSS__</style>
+</head>
+<body>
+<canvas id="stage"></canvas>
+
+<div id="hud" hidden>
+  <div id="topbar">
+    <div id="round-tag">Round 1 of 5</div>
+    <div id="opponent-tag"></div>
+    <div id="clock">1:15</div>
+  </div>
+  <div class="fuel" id="fuel-you"><i></i><span>Your arm</span></div>
+  <div class="fuel" id="fuel-opp"><i></i><span>Opponent</span></div>
+  <div id="grip-meter"><i id="grip-needle"></i></div>
+  <div id="tell-ring" aria-hidden="true"><i></i></div>
+  <div id="call"></div>
+</div>
+
+<div id="touch-left" class="touch-zone"><b>BRACE</b><small>hold to absorb the push</small></div>
+<div id="touch-right" class="touch-zone"><b>PRESS</b><small>hold while the light is up</small></div>
+
+<div id="menu">
+  <h1>TENTACLASH</h1>
+  <p class="sub">The Deep Championship. One arm wrestles. Seven rest.</p>
+  <div class="howto">
+    <div><b>Hold PRESS</b> while the arena light is up. Pressing out of time costs you the grip.</div>
+    <div><b>Hold BRACE</b> when you are being pushed back.</div>
+    <div><b>Pick an arm</b> each round. A tired arm is a weak arm, and it stays tired.</div>
+  </div>
+  <button id="start" type="button">Enter the tournament</button>
+</div>
+
+<div id="pick" hidden>
+  <h2>Choose the arm</h2>
+  <p id="vs"></p>
+  <div id="arm-grid"></div>
+</div>
+
+<div id="result" hidden>
+  <h2 id="result-title"></h2>
+  <p id="result-line"></p>
+  <div id="result-stats"></div>
+  <button id="next" type="button"></button>
+</div>
+
+<script type="module">__JS__</script>
+</body>
+</html>

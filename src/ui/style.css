@@ -1,0 +1,154 @@
+/* Palette from ~/code/vivid-fish-brand/src/tokens.css — the whole reef uses these. */
+:root {
+  --bg: #06111b;
+  --surface-1: #0a1a28;
+  --surface-2: #10263a;
+  --border: rgba(116, 171, 222, 0.18);
+  --border-strong: rgba(147, 203, 238, 0.34);
+  --text: #f1ebd9;
+  --muted: #b6cbd9;
+  --subtle: #7892a8;
+  --accent: #82d9df;
+  --accent-2: #f1b4be;
+  --ok: #64d7a5;
+  --warn: #e0bc66;
+  --bad: #ec806e;
+  --coral: #b86d76;
+  --sand: #dccb9a;
+  --panel: rgba(10, 26, 40, 0.92);
+  --radius: 10px;
+  --safe-t: env(safe-area-inset-top, 0px);
+  --safe-b: env(safe-area-inset-bottom, 0px);
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0; height: 100%; overflow: hidden;
+  background: var(--bg); color: var(--text);
+  font: 15px/1.45 ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  overscroll-behavior: none; touch-action: none;
+  -webkit-user-select: none; user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+#stage { position: fixed; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; }
+
+/* ---------- overlays: menu, pick, result ---------- */
+/* Overlays sit *over* the render, so the scrim is an edge vignette: it keeps the
+   arena readable behind the words instead of burying it. No backdrop blur across
+   the whole viewport — that turns a 3D scene into mush. */
+#menu, #pick, #result {
+  position: fixed; inset: 0; display: grid; place-content: center; gap: 14px;
+  padding: calc(20px + var(--safe-t)) 18px calc(20px + var(--safe-b));
+  background: radial-gradient(110% 80% at 50% 42%, rgba(6,17,27,0.12) 0%, rgba(6,17,27,0.55) 62%, rgba(4,11,19,0.86) 100%);
+  text-align: center; z-index: 20;
+}
+[hidden] { display: none !important; }
+
+h1 { font-size: clamp(34px, 11vw, 62px); letter-spacing: 0.06em; margin: 0; color: var(--accent-2); }
+h2 { font-size: clamp(20px, 6vw, 30px); margin: 0; }
+.sub { color: var(--muted); margin: 0 0 6px; }
+.howto { display: grid; gap: 8px; max-width: 460px; margin: 0 auto; }
+.howto div {
+  background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 10px 12px; text-align: left; color: var(--muted); font-size: 14px;
+}
+.howto b { color: var(--text); }
+
+button {
+  appearance: none; min-height: 52px; padding: 0 26px; margin: 6px auto 0;
+  font: inherit; font-weight: 650; letter-spacing: 0.03em; color: #031016;
+  background: var(--accent); border: 0; border-radius: 999px; cursor: pointer;
+}
+button:active { transform: translateY(1px); background: #a7ddd6; }
+
+#vs { color: var(--muted); margin: 0; }
+#vs b { color: var(--accent-2); }
+
+#arm-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 10px; width: min(680px, 96vw); margin: 0 auto;
+}
+.arm-card {
+  text-align: left; padding: 12px; border-radius: var(--radius); cursor: pointer;
+  background: var(--surface-1); border: 1px solid var(--border); color: var(--text);
+  min-height: 86px;
+}
+.arm-card:active, .arm-card.sel { border-color: var(--accent); background: var(--surface-2); }
+.arm-card[disabled] { opacity: 0.45; cursor: not-allowed; }
+.arm-card h3 { margin: 0 0 2px; font-size: 15px; }
+.arm-card .blurb { color: var(--subtle); font-size: 13px; }
+.arm-card .bar { display: block; height: 5px; border-radius: 3px; background: rgba(255,255,255,0.09); margin-top: 8px; }
+.arm-card .bar i { display: block; height: 100%; border-radius: 3px; background: var(--ok); }
+.arm-card .bar.tired i { background: var(--bad); }
+
+#result-stats { color: var(--subtle); font-size: 13px; }
+
+/* ---------- in-match hud ---------- */
+#hud { position: fixed; inset: 0; pointer-events: none; z-index: 10; }
+
+#topbar {
+  position: absolute; top: calc(8px + var(--safe-t)); left: 0; right: 0;
+  display: flex; justify-content: space-between; align-items: baseline;
+  padding: 0 14px; font-size: 13px; color: var(--muted);
+}
+#round-tag { color: var(--subtle); letter-spacing: 0.08em; text-transform: uppercase; }
+#opponent-tag b { color: var(--accent-2); }
+#clock { font-variant-numeric: tabular-nums; font-size: 16px; color: var(--text); }
+
+.fuel {
+  position: absolute; top: calc(34px + var(--safe-t)); width: 34%; max-width: 240px;
+  height: 6px; background: rgba(255,255,255,0.10); border-radius: 3px;
+}
+.fuel i { display: block; height: 100%; border-radius: 3px; background: var(--accent); transition: width 120ms linear; }
+.fuel.low i { background: var(--bad); }
+#fuel-you { left: 14px; } #fuel-opp { right: 14px; }
+.fuel span { position: absolute; top: 9px; left: 0; font-size: 10px; color: var(--subtle); letter-spacing: 0.1em; text-transform: uppercase; }
+#fuel-opp span { left: auto; right: 0; }
+
+/* The grip bar is the one number worth showing: it is the sport. */
+#grip-meter {
+  position: absolute; left: 50%; transform: translateX(-50%);
+  bottom: calc(96px + var(--safe-b)); width: min(320px, 74vw); height: 8px;
+  background: linear-gradient(90deg, var(--bad), rgba(255,255,255,0.14) 50%, var(--ok));
+  border-radius: 4px; border: 1px solid var(--border);
+}
+#grip-needle { position: absolute; top: -5px; width: 4px; height: 18px; border-radius: 2px; background: var(--text); }
+
+/* A second read of the opponent's tell, for when the 3D is small or bright. */
+#tell-ring { position: absolute; left: 50%; transform: translateX(-50%); bottom: calc(116px + var(--safe-b)); width: 26px; height: 26px; }
+#tell-ring i { display: block; width: 100%; height: 100%; border-radius: 50%; border: 2px solid var(--accent); opacity: 0.15; }
+#tell-ring.hot i { opacity: 1; border-color: var(--warn); box-shadow: 0 0 14px rgba(224,188,102,0.7); }
+
+#call {
+  position: absolute; left: 50%; transform: translateX(-50%); top: 38%;
+  font-size: clamp(22px, 7vw, 40px); font-weight: 700; letter-spacing: 0.05em;
+  color: var(--text); text-shadow: 0 2px 18px rgba(0,0,0,0.8); opacity: 0;
+  transition: opacity 180ms;
+}
+#call.show { opacity: 1; }
+
+/* ---------- touch controls: two thumb zones, nothing small to hit ---------- */
+.touch-zone {
+  position: fixed; bottom: 0; height: 45%; z-index: 15;
+  display: flex; flex-direction: column; justify-content: flex-end; align-items: center;
+  padding-bottom: calc(26px + var(--safe-b)); color: var(--muted); pointer-events: auto;
+  border-top: 1px solid transparent; opacity: 0.5;
+}
+.touch-zone b { font-size: 15px; letter-spacing: 0.14em; }
+.touch-zone small { font-size: 11px; color: var(--subtle); }
+#touch-left { left: 0; width: 42%; }
+#touch-right { right: 0; width: 58%; }
+.touch-zone.down { opacity: 1; background: linear-gradient(to top, rgba(130,217,223,0.16), transparent); border-top-color: var(--border); }
+
+/* On a mouse, the thumb zones are noise; the keys are the instruction. */
+@media (pointer: fine) {
+  .touch-zone { display: none; }
+  #grip-meter { bottom: 42px; }
+  #tell-ring { bottom: 62px; }
+}
+@media (max-height: 520px) {
+  #grip-meter { bottom: calc(58px + var(--safe-b)); }
+  .fuel { top: calc(30px + var(--safe-t)); }
+}

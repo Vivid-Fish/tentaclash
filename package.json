@@ -1,0 +1,21 @@
+{
+  "name": "tentaclash",
+  "version": "1.0.0",
+  "description": "Tentaclash \u2014 an octopus arm-wrestling tournament, three.js",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "./build.sh",
+    "test": "./test.sh",
+    "dev": "python3 -m http.server 8137 --directory dev",
+    "shots": "node tools/shots.mjs"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.0",
+    "playwright": "^1.61.1",
+    "three": "0.187.0"
+  },
+  "allowScripts": {
+    "esbuild@0.25.12": true
+  }
+}
