@@ -60,3 +60,40 @@ Bracing well is a real strategy, so this is not treated as a defect, but it mean
 "the light arm cannot win the final" is true for unbraced play only. The heavy arms
 `s3`/`p4` win Ota only 3/5, so `s1` is the strongest arm in the final rather than
 the heavy family being uniformly best.
+
+## Round shape: measured, and worse than the win rates
+
+`tools/drama.mjs` reads the grip trace instead of the result, and reports the things
+a player would describe: how often the lead changes, how much of the round you spend
+losing, how late the outcome is settled, how long the round runs, and whether it ends
+in a pin or on the judges. Run it as `node tools/drama.mjs s3`.
+
+Measured with the `pumper` bot, 5 seeds per row (75 s is the round clock):
+
+| arm | early rounds | Bruno / Ota | lead changes | outcome settled by |
+|---|---|---|---|---|
+| `s1` strongest | won in 6-8 s | won in 14-27 s | 0.0-1.0 | 0-7% of the round |
+| `s3` middle | won in 9-12 s | lost on points after 75 s losing 67% | 0.0-2.0 | 0-32% |
+| `s4` lightest | won in 15-29 s | lost after 75 s **losing 99% of the round** | 0.0-1.0 | 0-13% |
+| mashing | lost in 4-8 s, 90% spent losing | | 0.0 | immediately |
+
+This says the difficulty curve is right and the contest shape is wrong. A skilled
+player wins every grip as a walkover: the lead is taken in the first two seconds and
+never given back, so the rest of the round is pushing an already-defeated arm down.
+A light arm spends 75 seconds being slowly crushed with no moment of hope. Mashing is
+punished quickly, which is the one shape working as intended.
+
+The cause is structural, not a number to tune. Nothing in `match.js` gives the
+losing side a reason it can fight back: opponent push is periodic and fully counted
+by a competent player, opponent stamina only falls, and there is no resistance near
+the pin. A real arm-wrestling match is drama because the loser refuses near the
+mat; this model has no refusal.
+
+Not yet an acceptance bar. If we take this on, the bar would be: against the last
+two opponents a win must not be settled before 40% of the round and must involve at
+least one lead change; no round should run the full 75 s; and a losing run should
+contain at least one moment where the grip is within one inch of winning. The
+candidate rules are a defender's resistance rising near their own pin line (a braced
+edge, which is also what people do), one telegraphed second-wind spike per round for
+the later opponents, and shortening the clock so a stalled grip goes to the judges
+instead of running out.
