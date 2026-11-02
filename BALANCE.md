@@ -61,6 +61,44 @@ Bracing well is a real strategy, so this is not treated as a defect, but it mean
 `s3`/`p4` win Ota only 3/5, so `s1` is the strongest arm in the final rather than
 the heavy family being uniformly best.
 
+## Input timing budget: what the rules ask of a thumb
+
+`tools/input-window.mjs` measures the window in which a press counts as a counter,
+in milliseconds, and what a laggy device costs. The rules call a press a counter
+above quality 1.20, which means a tell of about 0.59:
+
+| opponent | pattern | counter window | full 1.75x window | cycle |
+|---|---|---|---|---|
+| Carcinus | wave | 1156 ms | 658 ms | 2600 ms |
+| Tula | feint | 490 ms | 279 ms | 2200 ms |
+| **Rav** | **spike** | **249 ms** | **138 ms** | 1900 ms |
+| Bruno | grind | 1498 ms | 641 ms | 3400 ms |
+| Ota | feint | 468 ms | 266 ms | 2100 ms |
+
+Two results matter:
+
+- **Frame rate is free.** The same player at 20 fps wins exactly as often as at
+  60 fps (identical counters, identical round times). The fixed timestep plus these
+  window widths make a weak phone fair, which is worth knowing before anyone
+  optimises draw calls for the sake of difficulty.
+- **Latency is not free.** Give the same player a 60 ms delay between the tell and
+  what they see, and **Rav goes from 5/5 to 0/5**. A 249 ms window with ~100 ms of
+  touch-to-pixels pipeline is a window the phone eats, not the player. The other
+  four opponents are latency-tolerant; only the spike pattern is fragile.
+
+So the game is frame-rate-proof and latency-fragile, and the fragility sits on one
+opponent. Two honest fixes, in order of preference: take the input timestamp from
+the event (`PointerEvent.timeStamp`) and apply the press at the moment the thumb
+moved, which is what rhythm games do, with an optional calibration the player can
+set; or widen the spike window to the same order as the others (400 ms+) and accept
+that Rav stops being the timing test. A `test/input.test.mjs` bar would say: the
+win rate of one fixed bot must not fall by more than one round out of five between
+0 ms and 90 ms of input lag. That test does not exist yet.
+
+Not measured: real touch-to-pixels latency on real phones. Everything above is
+browser emulation and arithmetic, which is exactly the gap the corpus warns about
+("Touch interaction early; physical device check before claiming mobile-ready").
+
 ## Round shape: measured, and worse than the win rates
 
 `tools/drama.mjs` reads the grip trace instead of the result, and reports the things

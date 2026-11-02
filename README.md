@@ -54,6 +54,7 @@ Other useful commands:
 ```sh
 node tools/balance.mjs s1     # win rates, round times, counters, fuel per arm
 node tools/drama.mjs s1      # what a round feels like: lead changes, time losing, how late it is decided
+node tools/input-window.mjs  # how wide the timing window is in ms, and what a laggy phone costs
 node test/render.mjs          # Chromium: desktop + mobile, screenshots in artifacts/
 node tools/shots.mjs          # screenshots plus draw-call and frame counters
 ```
