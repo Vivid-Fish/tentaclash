@@ -397,14 +397,14 @@ export function createStage(canvas) {
       fov = 40;
     } else if (camera.aspect < 1.15) {
       // Phone framing. A narrow frame cannot hold a 3.5 m wide scene: at 390 px wide
-      // the horizontal half-angle is about 12 degrees, so the grip and the opponent's
-      // face cannot both be in shot. The grip wins its place, at just left of centre
-      // with the opponent's forearm and claw filling the right third; the tell is read
-      // from the arena light and that arm, and the landscape frame shows the body.
+      // the horizontal half-angle is about 13 degrees. This sits far enough back that
+      // the grip stays just left of centre *and* the opponent's near body is in shot,
+      // because reading that body is the game; the grip is the larger of the two, and
+      // the landscape frame shows both wrestlers in full.
       const lean = view.angle * 0.2;
-      pos = new THREE.Vector3(-0.3 + lean * 0.15, 2.05 + view.angle * 0.1, 2.55);
-      look = new THREE.Vector3(0.12, ELBOW_Y + 0.26 - view.angle * 0.08, 0.02);
-      fov = 50;
+      pos = new THREE.Vector3(-0.35 + lean * 0.15, 2.1 + view.angle * 0.1, 3.2);
+      look = new THREE.Vector3(0.3, ELBOW_Y + 0.26 - view.angle * 0.08, 0.02);
+      fov = 52;
     } else {
       // Three-quarter view from in front of the table, above the pads. The grip sits
       // centred with nothing crossing it, and both wrestlers stay readable at the

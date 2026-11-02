@@ -94,6 +94,10 @@ button:active { transform: translateY(1px); background: #a7ddd6; }
   padding: 0 14px; font-size: 13px; color: var(--muted);
 }
 #round-tag { color: var(--subtle); letter-spacing: 0.08em; text-transform: uppercase; }
+/* Long opponent lines ("deep-sea isopod, defending champion") wrapped into the
+   fuel bars below, so the line is one row that truncates, and on narrow screens
+   it stops at the name. */
+#opponent-tag { max-width: 52%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 #opponent-tag b { color: var(--accent-2); }
 #clock { font-variant-numeric: tabular-nums; font-size: 16px; color: var(--text); }
 
@@ -147,6 +151,9 @@ button:active { transform: translateY(1px); background: #a7ddd6; }
   .touch-zone { display: none; }
   #grip-meter { bottom: 42px; }
   #tell-ring { bottom: 62px; }
+}
+@media (max-width: 560px) {
+  #opponent-tag .desc { display: none; }
 }
 @media (max-height: 520px) {
   #grip-meter { bottom: calc(58px + var(--safe-b)); }

@@ -36,7 +36,7 @@ export function createHud() {
 
     startRound({ round, opponent }) {
       els.round.textContent = `Round ${round + 1} of 5`;
-      els.opponent.innerHTML = `<b>${opponent.name}</b> · ${opponent.species}`;
+      els.opponent.innerHTML = `<b>${opponent.name}</b><span class="desc"> · ${opponent.species}</span>`;
       els.hud.hidden = false;
     },
 

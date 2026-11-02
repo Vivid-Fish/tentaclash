@@ -48,6 +48,13 @@ window.__tentaclash = {
   stats: () => stage.stats?.() ?? null,
   canvas: () => [canvas.width, canvas.height],
   phase: () => (app.match ? readView(app.match).phase : 'menu'),
+  // QA hook: move the bracket to a given round so a later opponent can be framed in
+  // a browser without winning three grips first. The game itself never calls it.
+  jumpRound(n) {
+    app.tournament.round = Math.max(0, Math.min(OPPONENTS.length - 1, (n | 0) - 1));
+    app.match = null;
+    beginRound();
+  },
 };
 
 // Size it before the first frame: without this the canvas keeps its default

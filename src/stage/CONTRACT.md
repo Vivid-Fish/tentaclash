@@ -76,6 +76,15 @@ Non-negotiables, because they are what makes it feel like the sea:
 5. `you.boost > 1.2` flashes the octopus's skin — an octopus changes colour when it
    is working. That is free characterisation and it teaches the counter.
 
+## Checking it in a browser
+
+`window.__tentaclash` exists for that and nothing else: `stats()` (draw calls),
+`canvas()` (buffer size), `phase()` (so a test waits for the grip instead of
+sleeping through a random referee count), and `jumpRound(n)` (so round 4's opponent
+can be framed without winning three grips). `test/render.mjs` is the gate and takes
+an optional URL, so it checks a deployed copy too; `tools/shots.mjs` is the staging
+loop, screenshots at desktop and phone sizes.
+
 ## Performance
 
 It must run at 60fps on integrated graphics, and the headless test runs it in
