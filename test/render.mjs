@@ -39,14 +39,28 @@ const check = (ok, label, detail = '') => {
   if (!ok) fail.push(label);
 };
 
+// The referee's count is deliberately random, so a fixed sleep sometimes measures the
+// set instead of the grip, and a check measured during the set proves nothing.
+const toGrip = (p) => p.waitForFunction(() => window.__tentaclash?.phase() === 'fighting',
+  null, { timeout: 10000 });
+
 if (!existsSync(path.join(DIST, 'index.html'))) {
   console.error('dist/index.html missing — run ./build.sh first');
   process.exit(1);
 }
 mkdirSync(ARTIFACTS, { recursive: true });
 
-const { server, port } = await serve(DIST);
-const url = `http://127.0.0.1:${port}/`;
+// Pass a URL to test a deployed copy instead of the local build, e.g.
+//   node test/render.mjs https://tentaclash.vivid.fish/
+const target = process.argv[2];
+let server = null;
+let url = target;
+if (!url) {
+  const started = await serve(DIST);
+  server = started.server;
+  url = `http://127.0.0.1:${started.port}/`;
+}
+console.log(`render gate target: ${url}`);
 
 const browser = await chromium.launch({
   args: ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader'],
@@ -85,9 +99,7 @@ try {
   await page.click('#start');
   await page.waitForTimeout(600);
   await page.click('#arm-grid .arm-card >> nth=0');
-  // Wait for the referee to finish the set: pressing during it is not a grip, and a
-  // check that measures the set phase proves nothing about the grip.
-  await page.waitForTimeout(3200);
+  await toGrip(page);
 
   const read = () => page.evaluate(() => ({
     needle: parseFloat(document.getElementById('grip-needle').style.left),
@@ -142,7 +154,7 @@ try {
   await page2.click('#start');
   await page2.waitForTimeout(500);
   await page2.click('#arm-grid .arm-card >> nth=0');
-  await page2.waitForTimeout(3200);
+  await toGrip(page2);
   // Six taps, spaced past the pump cooldown, on the Press zone. Both channels are
   // checked: a tap that moves nothing, and a tap that costs no fuel, are both the
   // same bug — the thumb not reaching the rules.
@@ -164,7 +176,7 @@ try {
 
 } finally {
   await browser.close();
-  server.close();
+  server?.close();
 }
 
 if (fail.length) {

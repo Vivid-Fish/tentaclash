@@ -233,8 +233,9 @@ export function createStage(canvas) {
     const a = (i / ANEMONES) * Math.PI * 2 + (i % 3) * 0.21;
     const r = 4.6 + (i % 4) * 1.5;
     const s = 0.4 + ((i * 7) % 10) / 16;
-    dummy.position.set(Math.cos(a) * r, s * 0.12, Math.sin(a) * r);
-    dummy.scale.set(s, s * 1.7, s);
+    // Low, sunk mounds. A tall glowing sphere at the horizon reads as a balloon.
+    dummy.position.set(Math.cos(a) * r, -0.1, Math.sin(a) * r);
+    dummy.scale.set(s * 1.3, s * 0.75, s * 1.3);
     dummy.updateMatrix();
     anemones.setMatrixAt(i, dummy.matrix);
   }
@@ -261,9 +262,13 @@ export function createStage(canvas) {
     leg.position.set(x, 0.47, 0);
     table.add(leg);
   }
-  // A small brass strip on the near skirt: signage without a billboard.
-  const nameplate = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.1, 0.02), brassMat);
-  nameplate.position.set(0, 0.9, 0.52);
+  // A small brass strip on the near skirt: signage without a billboard. Full-size
+  // brass here catches the key light and turns the table into a yellow plank.
+  const nameplate = new THREE.Mesh(
+    new THREE.BoxGeometry(0.44, 0.07, 0.02),
+    new THREE.MeshStandardMaterial({ color: 0x5c4a24, roughness: 0.55, metalness: 0.5 }),
+  );
+  nameplate.position.set(0.1, 0.9, 0.53);
   table.add(nameplate);
   scene.add(table);
 
@@ -335,11 +340,19 @@ export function createStage(canvas) {
   fin.position.set(0, 0.02, -0.85);
   fin.rotation.x = -Math.PI / 2;
   eel.add(body, head, cap, eye, eyeR, fin);
-  eel.position.set(0.05, 1.32, -1.05);
-  ref.add(eel);
+  // The whistle belongs to the referee, so it hangs by its head instead of floating
+  // where the table used to be.
   const whistle = new THREE.Mesh(new THREE.TorusGeometry(0.06, 0.025, 6, 12), brassMat);
-  whistle.position.set(0.14, 1.24, -0.72);
-  ref.add(whistle);
+  whistle.position.set(0.26, -0.02, 0.44);
+  whistle.rotation.set(Math.PI / 2, 0, 0.3);
+  eel.add(whistle);
+  // Beside the table on the far side, facing the grip. It used to sit in the middle
+  // of the table at grip height with its body across the one thing the player must
+  // look at, and hovering over the hands it read as a worm, not an official.
+  eel.scale.setScalar(0.85);
+  eel.position.set(-1.15, 1.72, -1.55);
+  eel.rotation.set(0.16, 0.65, 0);
+  ref.add(eel);
   scene.add(ref);
 
   // ---------- the wrestlers ----------
@@ -382,14 +395,25 @@ export function createStage(canvas) {
       pos = new THREE.Vector3(-1.4, 1.75 + s * 0.3, 1.95 - s * 0.4);
       look = new THREE.Vector3(0, ELBOW_Y + 0.22, 0);
       fov = 40;
+    } else if (camera.aspect < 1.15) {
+      // Phone framing. A narrow frame cannot hold a 3.5 m wide scene: at 390 px wide
+      // the horizontal half-angle is about 12 degrees, so the grip and the opponent's
+      // face cannot both be in shot. The grip wins its place, at just left of centre
+      // with the opponent's forearm and claw filling the right third; the tell is read
+      // from the arena light and that arm, and the landscape frame shows the body.
+      const lean = view.angle * 0.2;
+      pos = new THREE.Vector3(-0.3 + lean * 0.15, 2.05 + view.angle * 0.1, 2.55);
+      look = new THREE.Vector3(0.12, ELBOW_Y + 0.26 - view.angle * 0.08, 0.02);
+      fov = 50;
     } else {
-      // Over your shoulder, behind and above your own octopus: your arm on the pad
-      // in the foreground, the opponent facing you so its body is readable, because
-      // reading that body is the game.
-      const lean = view.angle * 0.28;
-      pos = new THREE.Vector3(-3.35 - lean * 0.25, 2.02 + view.angle * 0.14, 1.62 + lean * 0.55);
-      look = new THREE.Vector3(0.42, ELBOW_Y + 0.14 - view.angle * 0.1, 0.02);
-      fov = 42;
+      // Three-quarter view from in front of the table, above the pads. The grip sits
+      // centred with nothing crossing it, and both wrestlers stay readable at the
+      // frame edges: reading the opponent's body is the game. Behind your own
+      // octopus (an earlier version) its head covered the grip.
+      const lean = view.angle * 0.22;
+      pos = new THREE.Vector3(0.28 + lean * 0.2, 2.3 + view.angle * 0.12, 3.05);
+      look = new THREE.Vector3(0.05, ELBOW_Y + 0.22 - view.angle * 0.08, 0.02);
+      fov = 40;
     }
     const k = Math.min(1, dt * 3.2);
     camState.pos.lerp(pos, k);

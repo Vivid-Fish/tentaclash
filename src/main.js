@@ -42,8 +42,13 @@ const app = {
 function resize() {
   stage.resize();
 }
-/** A small hook so the render gate can check the draw-call budget. */
-window.__tentaclash = { stats: () => stage.stats?.() ?? null, canvas: () => [canvas.width, canvas.height] };
+/** A small hook so the render gate can check the draw-call budget and wait for a
+ *  phase instead of sleeping a guessed amount of time. */
+window.__tentaclash = {
+  stats: () => stage.stats?.() ?? null,
+  canvas: () => [canvas.width, canvas.height],
+  phase: () => (app.match ? readView(app.match).phase : 'menu'),
+};
 
 // Size it before the first frame: without this the canvas keeps its default
 // 300x150 buffer and the whole game is a blurred upscale of that.

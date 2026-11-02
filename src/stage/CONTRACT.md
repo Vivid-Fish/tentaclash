@@ -82,7 +82,7 @@ It must run at 60fps on integrated graphics, and the headless test runs it in
 SwiftShader. No per-frame allocations, and `setQuality('low')` drops bloom and
 instance counts without dropping the caustics or the tell.
 
-Draw calls: the target was under 60. The build is currently at **76**, measured by
+Draw calls: the target was under 60. The build is currently at **77**, measured by
 `tools/shots.mjs` (`window.__tentaclash.stats()`). The gap is known and mechanical:
 the table is 9 meshes that share two materials, the grip is 6, and the referee is 6.
 Merging each material group into one geometry (three merges, no behaviour change)
