@@ -7,7 +7,7 @@
   "scripts": {
     "build": "./build.sh",
     "test": "./test.sh",
-    "dev": "python3 -m http.server 8137 --directory dev",
+    "dev": "./build.sh && python3 -m http.server 8137 --directory dist",
     "shots": "node tools/shots.mjs"
   },
   "devDependencies": {
